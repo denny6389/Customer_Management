@@ -1,3 +1,6 @@
+## Customer Management System
+This is a Customer Management System project made for self-study of React and Node.js
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
