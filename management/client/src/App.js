@@ -20,22 +20,24 @@ const styles = theme => ({
   }
 })
 
-const customers = [
-    {'id': 1,
-     'profilePic': 'https://placeimg.com/64/64/1',
-     'name': 'Sam',
-     'major': 'Computer Science',
-     'studentId': '260728949',
-     'gender': 'Male'},
-    {'id': 2,
-     'profilePic': 'https://placeimg.com/64/64/2',
-     'name': 'Tom',
-     'major': 'Progamer',
-     'studentId': '2017492093',
-     'gender': 'Male'}
-  ]
-
 class App extends Component {
+
+  state = {
+    customer: ""
+  }
+//컴포넌트가 만들어지고 첫 렌더링을 다 마친 후 실행되는 메소드
+  componentDidMount() {
+    this.callApi()
+      .then(response => this.setState({customers: response}))
+      .catch(err => console.log(err));
+  }
+
+  callApi = async() => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -53,11 +55,10 @@ class App extends Component {
           </TableHead>
 
           <TableBody>
-            {customers.map(c => {
-                return (
-                  <Customer key={c.id} id={c.id} profilePic={c.profilePic} name={c.name}
-                    major={c.major} studentId={c.studentId} gender={c.gender}/>
-                )})}
+            {this.state.customers ? this.state.customers.map(c => {
+                return (<Customer key={c.id} id={c.id} profilePic={c.profilePic} name={c.name}
+                        major={c.major} studentId={c.studentId} gender={c.gender}/>)})
+            : ""}
           </TableBody>
         </Table>
       </Paper>
