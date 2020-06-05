@@ -33,7 +33,7 @@ connection.connect();
 
 app.get('/api/customers', (request, response) => {
   connection.query(
-    "SELECT * FROM CUSTOMER",
+    "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
     (err, rows, fields) => {
       response.send(rows);
     }
@@ -42,13 +42,23 @@ app.get('/api/customers', (request, response) => {
 
 app.use('http://localhost:5000/profilePic', express.static('./uploads'));
 app.post('/api/customers', upload.single('profilePic'), (request,response) => {
-  let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)';
+  let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)';
   let profilePic = 'http://localhost:5000/profilePic/' + request.file.filename;
   let name = request.body.name;
   let major = request.body.major;
   let studentId = request.body.studentId;
   let gender = request.body.gender;
   let params = [profilePic, name, major, studentId, gender];
+  connection.query(sql, params,
+    (err, rows, fields) => {
+      response.send(rows);
+    }
+  )
+});
+
+app.delete('/api/customers/:id', (request, response) => {
+  let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?';
+  let params = [request.params.id];
   connection.query(sql, params,
     (err, rows, fields) => {
       response.send(rows);
