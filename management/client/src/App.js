@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Customer from './components/Customer'
+import AddCustomer from './components/AddCustomer'
 import Table from '@material-ui/core/Table'
 import TableHead from '@material-ui/core/TableHead'
 import TableBody from '@material-ui/core/TableBody'
@@ -26,10 +27,24 @@ const styles = theme => ({
 
 class App extends Component {
 
-  state = {
-    customer: "",
-    completed: 0
+  constructor(props) {
+    super(props);
+    this.state = {
+      customers: '',
+      completed: 0
+    }
   }
+
+  stateRefresh = () => {
+    this.setState({
+      customers: '',
+      completed: 0
+    });
+    this.callApi()
+      .then(response => this.setState({customers: response}))
+      .catch(err => console.log(err));
+  }
+
 //컴포넌트가 만들어지고 첫 렌더링을 다 마친 후 실행되는 메소드
   componentDidMount() {
     this.timer = setInterval(this.progress, 20);
@@ -52,31 +67,34 @@ class App extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Profile Pic</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Major</TableCell>
-              <TableCell>Student Id</TableCell>
-              <TableCell>Gender</TableCell>
-            </TableRow>
-          </TableHead>
+      <div>
+        <Paper className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>No.</TableCell>
+                <TableCell>Profile Pic</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Major</TableCell>
+                <TableCell>Student Id</TableCell>
+                <TableCell>Gender</TableCell>
+              </TableRow>
+            </TableHead>
 
-          <TableBody>
-            {this.state.customers ? this.state.customers.map(c => {
-                return (<Customer key={c.id} id={c.id} profilePic={c.profilePic} name={c.name}
-                        major={c.major} studentId={c.studentId} gender={c.gender}/>)})
-            : <TableRow>
-                <TableCell colSpan='6' align='center'>
-                  <CircularProgress className={classes.progress} variant='determinate' value={this.state.completed}/>
-                </TableCell>
-              </TableRow>}
-          </TableBody>
-        </Table>
-      </Paper>
+            <TableBody>
+              {this.state.customers ? this.state.customers.map(c => {
+                  return (<Customer key={c.id} id={c.id} profilePic={c.profilePic} name={c.name}
+                          major={c.major} studentId={c.studentId} gender={c.gender}/>)})
+              : <TableRow>
+                  <TableCell colSpan='6' align='center'>
+                    <CircularProgress className={classes.progress} variant='determinate' value={this.state.completed}/>
+                  </TableCell>
+                </TableRow>}
+            </TableBody>
+          </Table>
+        </Paper>
+        <AddCustomer stateRefresh={this.stateRefresh}/>
+      </div>
     );
   }
 }
