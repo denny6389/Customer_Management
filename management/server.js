@@ -19,8 +19,18 @@ const mysql = require('mysql');
 
 const multer = require('multer');
 
-const upload = multer({dest: './uploads'})
-
+//const upload = multer({dest: './uploads'})
+const path = require('path');
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, new Date().valueOf() + path.extname(file.originalname));
+    }
+  }),
+});
 //createConnection 메소드의 인자로 전달되는 객체에 자신의 데이터베이스 정보(유저명과 패스워드 등)를 입력
 const connection = mysql.createConnection({
   host: conf.host,
@@ -40,10 +50,10 @@ app.get('/api/customers', (request, response) => {
   );
 });
 
-app.use('http://localhost:5000/profilePic', express.static('./uploads'));
+app.use('/image', express.static('./uploads'));
 app.post('/api/customers', upload.single('profilePic'), (request,response) => {
   let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)';
-  let profilePic = 'http://localhost:5000/profilePic/' + request.file.filename;
+  let profilePic = 'http://localhost:5000/image/' + request.file.filename;
   let name = request.body.name;
   let major = request.body.major;
   let studentId = request.body.studentId;

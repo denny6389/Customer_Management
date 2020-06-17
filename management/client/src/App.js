@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { createRef, Component } from 'react';
 import Customer from './components/Customer'
 import AddCustomer from './components/AddCustomer'
 import Table from '@material-ui/core/Table'
@@ -14,14 +14,14 @@ import './App.css';
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing(3),
     overflowX: "auto"
   },
   table: {
     minWidth: 1080
   },
   progress: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   }
 })
 
@@ -34,6 +34,8 @@ class App extends Component {
       completed: 0
     }
   }
+
+  wrapper = createRef();
 
   stateRefresh = () => {
     this.setState({
@@ -67,7 +69,7 @@ class App extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <div ref={this.wrapper}>
         <Paper className={classes.root}>
           <Table className={classes.table}>
             <TableHead>
